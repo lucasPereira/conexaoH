@@ -69,6 +69,10 @@ public enum CodigoDeEstado implements Igualavel<CodigoDeEstado> {
 		return codigo;
 	}
 
+	public String comoTextoFormatado() {
+		return String.format("%d - %s.", codigo, mensagemPortugues);
+	}
+
 	@Override
 	public Boolean igual(CodigoDeEstado outro) {
 		return (this.codigo.equals(outro.codigo));
