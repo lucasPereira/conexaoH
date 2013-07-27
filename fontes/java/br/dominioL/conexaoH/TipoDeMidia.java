@@ -6,21 +6,16 @@ public enum TipoDeMidia {
 	PDF(TipoGenericoDeMidia.APLICACAO, "pdf"),
 	XML(TipoGenericoDeMidia.APLICACAO, "xml"),
 	ZIP(TipoGenericoDeMidia.APLICACAO, "zip"),
-
 	MP3(TipoGenericoDeMidia.AUDIO, "mpeg"),
-
 	GIF(TipoGenericoDeMidia.IMAGEM, "gif"),
-	JPEG(TipoGenericoDeMidia.IMAGEM, "jpeg"),
+	JPG(TipoGenericoDeMidia.IMAGEM, "jpeg"),
 	PNG(TipoGenericoDeMidia.IMAGEM, "png"),
 	SVG(TipoGenericoDeMidia.IMAGEM, "svg+xml"),
-
 	FORMULARIO(TipoGenericoDeMidia.MULTIPARTE, "form-data"),
-
 	CSS(TipoGenericoDeMidia.TEXTO, "css"),
 	CSV(TipoGenericoDeMidia.TEXTO, "csv"),
 	HTML(TipoGenericoDeMidia.TEXTO, "html"),
 	TEXTO(TipoGenericoDeMidia.TEXTO, "plain"),
-
 	MP4(TipoGenericoDeMidia.VIDEO, "mp4"),
 	MPEG(TipoGenericoDeMidia.VIDEO, "mpeg"),
 	OGG(TipoGenericoDeMidia.VIDEO, "ogg"),
@@ -38,11 +33,18 @@ public enum TipoDeMidia {
 
 	public String comoTexto() {
 		String texto;
-		if (tipoGenerico.equals(TipoGenericoDeMidia.APLICACAO) || tipoGenerico.equals(TipoGenericoDeMidia.MULTIPARTE) || tipoGenerico.equals(TipoGenericoDeMidia.TEXTO)) {
+		if (tipoGenerico.equals(TipoGenericoDeMidia.APLICACAO) ||
+			tipoGenerico.equals(TipoGenericoDeMidia.MULTIPARTE) ||
+			tipoGenerico.equals(TipoGenericoDeMidia.TEXTO)) {
 			texto = String.format("%s/%s;charset=%s", tipoGenerico.comoTexto(), tipo, CONJUNTO_DE_CARACTERES);
 		} else {
 			texto = String.format("%s/%s", tipoGenerico.comoTexto(), tipo);
 		}
+		return texto;
+	}
+
+	public String comoTextoSemCharset() {
+		String texto = String.format("%s/%s", tipoGenerico.comoTexto(), tipo);
 		return texto;
 	}
 

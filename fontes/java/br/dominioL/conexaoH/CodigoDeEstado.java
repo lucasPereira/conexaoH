@@ -47,6 +47,11 @@ public enum CodigoDeEstado implements Igualavel<CodigoDeEstado> {
 	HTTP_504(504, "Estouro de tempo do portão de acesso", "Gateway Time-out"),
 	HTTP_505(505, "Versão do protocolo não suportada", "HTTP Version not supported");
 
+	private static final Integer CODIGO_INFORMACIONAL = 100;
+	private static final Integer CODIGO_SUCESSO = 200;
+	private static final Integer CODIGO_REDIRECIONAMENTO = 300;
+	private static final Integer CODIGO_ERRO_DO_CLIENTE = 400;
+	private static final Integer CODIGO_ERRO_DO_SERVIDOR = 500;
 	private final Integer codigo;
 	private final String mensagemPortugues;
 	private final String mensagemIngles;
@@ -73,6 +78,31 @@ public enum CodigoDeEstado implements Igualavel<CodigoDeEstado> {
 		return String.format("%d - %s.", codigo, mensagemPortugues);
 	}
 
+	public Boolean informacional() {
+		Integer codigo = comoNumero();
+		return (codigo >= CODIGO_INFORMACIONAL && codigo < CODIGO_SUCESSO);
+	}
+
+	public Boolean sucesso() {
+		Integer codigo = comoNumero();
+		return (codigo >= CODIGO_SUCESSO && codigo < CODIGO_REDIRECIONAMENTO);
+	}
+
+	public Boolean redirecionamento() {
+		Integer codigo = comoNumero();
+		return (codigo >= CODIGO_REDIRECIONAMENTO && codigo < CODIGO_ERRO_DO_CLIENTE);
+	}
+
+	public Boolean erroDoCliente() {
+		Integer codigo = comoNumero();
+		return (codigo >= CODIGO_ERRO_DO_CLIENTE && codigo < CODIGO_ERRO_DO_SERVIDOR);
+	}
+
+	public Boolean erroDoServidor() {
+		Integer codigo = comoNumero();
+		return (codigo >= CODIGO_ERRO_DO_SERVIDOR);
+	}
+
 	@Override
 	public Boolean igual(CodigoDeEstado outro) {
 		return (this.codigo.equals(outro.codigo));
@@ -87,7 +117,7 @@ public enum CodigoDeEstado implements Igualavel<CodigoDeEstado> {
 	}
 
 	public Response fornecerResposta() {
-		return fornecerResposta(TipoDeMidia.TEXTO, comoTexto());
+		return fornecerResposta(TipoDeMidia.TEXTO, comoTextoFormatado());
 	}
 
 	public static CodigoDeEstado fornecerCodigoDeEstado(Integer codigo) {
