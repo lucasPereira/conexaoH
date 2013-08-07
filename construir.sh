@@ -14,6 +14,8 @@ bibliotecasJava=${bibliotecas}/jar
 binariosJava=${binarios}/class
 fontesJava=${fontes}/java
 testesJava=${testes}/java
+contrucaoCompilacao=${construcao}/compilacao.txt
+contrucaoTeste=${construcao}/teste.txt
 
 arquivosFontesJava=$(find ${fontesJava} -name *.java)
 arquivosTestesJava=$(find ${testesJava} -name *.java)
@@ -36,7 +38,7 @@ criarEstrutura() {
 
 adicionarBibliotecas() {
 	echo ":adicionarBibliotecas";
-	ln -sf ~/projetos/estruturados/construcao/estruturados.jar -t ${bibliotecasJava};
+	cp -f ~/projetos/estruturados/construcao/estruturados.jar -t ${bibliotecasJava};
 }
 
 compilar() {
@@ -44,8 +46,10 @@ compilar() {
 	criarEstrutura;
 	adicionarBibliotecas;
 	echo ":compilar";
-	javac -classpath ${bibliotecasJava}/*:${binariosJava} -sourcepath ${fontesJava} -d ${binariosJava} -Werror -deprecation -g ${arquivosFontesJava} -Xlint -Xmaxerrs 10 -Xmaxwarns 10;
-	javac -classpath ${bibliotecasJava}/*:${binariosJava} -sourcepath ${testesJava} -d ${binariosJava} -Werror -deprecation -g ${arquivosTestesJava} -Xlint -Xmaxerrs 10 -Xmaxwarns 10;
+	touch ${contrucaoCompilacao};
+	javac -classpath ${bibliotecasJava}/*:${binariosJava} -sourcepath ${fontesJava} -d ${binariosJava} -Werror -deprecation -g ${arquivosFontesJava} -Xlint -Xmaxerrs 10 -Xmaxwarns 10 &> ${contrucaoCompilacao};
+	javac -classpath ${bibliotecasJava}/*:${binariosJava} -sourcepath ${testesJava} -d ${binariosJava} -Werror -deprecation -g ${arquivosTestesJava} -Xlint -Xmaxerrs 10 -Xmaxwarns 10 &>> ${contrucaoCompilacao};
+	less ${contrucaoCompilacao};
 }
 
 construir() {
@@ -57,7 +61,9 @@ construir() {
 testar() {
 	construir;
 	echo ":testar";
-	java -classpath ${bibliotecasJava}/*:${binariosJava} org.junit.runner.JUnitCore ${classesTestesJava};
+	touch ${contrucaoTeste};
+	java -classpath ${bibliotecasJava}/*:${binariosJava} org.junit.runner.JUnitCore ${classesTestesJava} &> ${contrucaoTeste};
+	less ${contrucaoTeste};
 }
 
 depurar() {

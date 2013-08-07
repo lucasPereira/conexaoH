@@ -108,6 +108,15 @@ public enum CodigoDeEstado implements Igualavel<CodigoDeEstado> {
 		return (this.codigo.equals(outro.codigo));
 	}
 
+	public Response fornecerResposta(TipoDeMidia tipoDeMidia, Object entidade, String localizacao) {
+		return Response
+			.status(comoNumero())
+			.type(tipoDeMidia.comoTexto())
+			.entity(entidade)
+			.header(Atributo.LOCATION.comoTexto(), localizacao)
+			.build();
+	}
+
 	public Response fornecerResposta(TipoDeMidia tipoDeMidia, Object entidade) {
 		return Response
 			.status(comoNumero())

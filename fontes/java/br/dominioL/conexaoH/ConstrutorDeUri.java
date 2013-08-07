@@ -2,6 +2,9 @@ package br.dominioL.conexaoH;
 
 import java.util.regex.Pattern;
 
+import javax.ws.rs.Path;
+import javax.ws.rs.core.UriBuilder;
+
 public final class ConstrutorDeUri {
 	private static final String PROTOCOLO_PADRAO = "http"; 
 	private static final String ENDERECO_PADRAO = "localhost"; 
@@ -19,8 +22,14 @@ public final class ConstrutorDeUri {
 		this.caminho = caminho;
 	}
 
-	public static ConstrutorDeUri criarCom() {
+	public static ConstrutorDeUri criar() {
 		return new ConstrutorDeUri(PROTOCOLO_PADRAO, ENDERECO_PADRAO, PORTA_PADRAO, CAMINHO_PADRAO);
+	}
+
+	public static ConstrutorDeUri criar(Class<?> classe) {
+		String caminhoDoRecurso = classe.getAnnotation(Path.class).toString();
+		caminhoDoRecurso = caminhoDoRecurso.replaceAll("@javax.ws.rs.Path\\(value=(.+?)\\)", "$1");
+		return new ConstrutorDeUri(PROTOCOLO_PADRAO, ENDERECO_PADRAO, PORTA_PADRAO, caminhoDoRecurso);
 	}
 
 	public ConstrutorDeUri protocolo(String protocolo) {
@@ -39,12 +48,19 @@ public final class ConstrutorDeUri {
 	}
 
 	public ConstrutorDeUri caminho(String novoCaminho) {
-		this.caminho = String.format("%s/%s", caminho, novoCaminho);
+		caminho = String.format("%s/%s", caminho, novoCaminho);
+		return this;
+	}
+
+	public ConstrutorDeUri substituirParametro(String substituicao) {
+		caminho = caminho.replaceFirst("\\{(\\p{Alpha})+\\}", substituicao);
 		return this;
 	}
 
 	public String construirRelativo() {
-		return String.format("%s", caminho);
+		String caminhoFormatado = String.format("%s/", caminho);
+		caminhoFormatado = caminhoFormatado.replaceAll("/{2,}", "/");
+		return caminho;
 	}
 
 	public String construirAbsoluto() {

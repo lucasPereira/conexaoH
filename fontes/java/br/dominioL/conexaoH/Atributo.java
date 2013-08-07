@@ -16,6 +16,7 @@ public enum Atributo {
 	EXPECT("Expect"),
 	HOST("Host"),
 	KEEP_ALIVE("Keep-Alive"),
+	LOCATION("Location"),
 	ORIGIN("Origin"),
 	REFERER("Referer"),
 	TE("TE"),
