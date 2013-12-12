@@ -1,13 +1,11 @@
 package br.dominioL.conexaoH.testes;
 
 import static org.hamcrest.core.Is.is;
-
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-import br.dominioL.conexaoH.ConstrutorDeUri;
-
 import org.junit.Test;
+
+import br.dominioL.conexaoH.ConstrutorDeUri;
 
 public class TesteConstrutorDeUri {
 	@Test
@@ -105,6 +103,13 @@ public class TesteConstrutorDeUri {
 		ConstrutorDeUri construtor = ConstrutorDeUri.criar();
 		construtor.caminho("/recurso////qualquer");
 		assertThat(construtor.construirAbsoluto(), is("http://localhost:80/recurso/qualquer/"));
+	}
+	
+	@Test
+	public void criarComCaminhoDuploComBarraQuadruplaRelativo() {
+		ConstrutorDeUri construtor = ConstrutorDeUri.criar();
+		construtor.caminho("/recurso////qualquer");
+		assertThat(construtor.construirRelativo(), is("/recurso/qualquer/"));
 	}
 
 	@Test

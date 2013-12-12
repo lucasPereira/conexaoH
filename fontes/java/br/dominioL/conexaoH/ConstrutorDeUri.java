@@ -1,15 +1,13 @@
 package br.dominioL.conexaoH;
 
-import java.util.regex.Pattern;
-
 import javax.ws.rs.Path;
-import javax.ws.rs.core.UriBuilder;
 
 public final class ConstrutorDeUri {
 	private static final String PROTOCOLO_PADRAO = "http"; 
 	private static final String ENDERECO_PADRAO = "localhost"; 
 	private static final Integer PORTA_PADRAO = 80; 
 	private static final String CAMINHO_PADRAO = ""; 
+
 	private String protocolo;
 	private String endereco;
 	private Integer porta;
@@ -27,8 +25,7 @@ public final class ConstrutorDeUri {
 	}
 
 	public static ConstrutorDeUri criar(Class<?> classe) {
-		String caminhoDoRecurso = classe.getAnnotation(Path.class).toString();
-		caminhoDoRecurso = caminhoDoRecurso.replaceAll("@javax.ws.rs.Path\\(value=(.+?)\\)", "$1");
+		String caminhoDoRecurso = obterCaminhoDeRecurso(classe);
 		return new ConstrutorDeUri(PROTOCOLO_PADRAO, ENDERECO_PADRAO, PORTA_PADRAO, caminhoDoRecurso);
 	}
 
@@ -51,6 +48,10 @@ public final class ConstrutorDeUri {
 		caminho = String.format("%s/%s", caminho, novoCaminho);
 		return this;
 	}
+	
+	public ConstrutorDeUri caminho(Class<?> classe) {
+		return caminho(obterCaminhoDeRecurso(classe));
+	}
 
 	public ConstrutorDeUri substituirParametro(String substituicao) {
 		caminho = caminho.replaceFirst("\\{(\\p{Alpha})+\\}", substituicao);
@@ -60,12 +61,17 @@ public final class ConstrutorDeUri {
 	public String construirRelativo() {
 		String caminhoFormatado = String.format("%s/", caminho);
 		caminhoFormatado = caminhoFormatado.replaceAll("/{2,}", "/");
-		return caminho;
+		return caminhoFormatado;
 	}
 
 	public String construirAbsoluto() {
-		String caminhoFormatado = String.format("%s/", caminho);
-		caminhoFormatado = caminhoFormatado.replaceAll("/{2,}", "/");
+		String caminhoFormatado = construirRelativo();
 		return String.format("%s://%s:%s%s", protocolo, endereco, porta, caminhoFormatado);
+	}
+	
+	private static String obterCaminhoDeRecurso(Class<?> classe) {
+		String caminhoDoRecurso = classe.getAnnotation(Path.class).toString();
+		caminhoDoRecurso = caminhoDoRecurso.replaceAll("@javax.ws.rs.Path\\(value=(.+?)\\)", "$1");
+		return caminhoDoRecurso;
 	}
 }
