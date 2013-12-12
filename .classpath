@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="fontes/java"/>
+	<classpathentry kind="lib" path="bibliotecas/jar/estruturados.jar"/>
+	<classpathentry kind="lib" path="construcao/conexaoH.jar"/>
+	<classpathentry kind="lib" path="bibliotecas/jar/jsr311.jar"/>
+	<classpathentry kind="lib" path="bibliotecas/jar/junit.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="binarios/class"/>
+</classpath>
