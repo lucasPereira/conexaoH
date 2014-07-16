@@ -2,72 +2,57 @@
 
 projeto=ConexaoH
 pacoteDoProjeto=conexaoH
+pacoteGeral=br.dominioL
 
-bibliotecas=bibliotecas
-binarios=binarios
+jar=jar
+java=java
 construcao=construcao
-fontes=fontes
-recursos=recursos
 
-bibliotecasJava=${bibliotecas}/jar
-binariosJava=${binarios}/class
-fontesJava=${fontes}/java
-
+class=${construcao}/class
 contrucaoCompilacao=${construcao}/compilacao.txt
-contrucaoTeste=${construcao}/teste.txt
-
-contrucaoCompilacao=${construcao}/compilacao.txt
-arquivosFontesJava=$(find ${fontesJava} -name *.java)
-arquivosTestesJava=$(find ${fontesJava} -name *Teste*.java)
-classesTestesJava=$(echo ${arquivosTestesJava} | sed -e s:${fontesJava}::g -e s:^/::g -e "s:\s/: :g" -e s:/:.:g -e s:[.]java::g -e s:[a-Z.]*figuracao[a-Z.]*::g)
 
 limpar() {
 	echo ":limpar"
-	rm -rf ${binarios}
 	rm -rf ${construcao}
 }
 
 criarEstrutura() {
+	limpar
 	echo ":criarEstrutura"
-	mkdir -p ${bibliotecasJava}
-	mkdir -p ${binariosJava}
+	mkdir -p ${jar}
+	mkdir -p ${java}
 	mkdir -p ${construcao}
-	mkdir -p ${fontesJava}
+
+	mkdir -p ${class}
 }
 
-adicionarBibliotecas() {
-	echo ":adicionarBibliotecas"
-	cp -f ~/projetos/estruturados/construcao/estruturados.jar -t ${bibliotecasJava}
+atualizarBibliotecas() {
+	criarEstrutura
+	echo ":atualizarBibliotecas"
+	cp -f ~/projetos/estruturados/construcao/estruturados.jar ${jar}
 }
 
 compilar() {
-	limpar
-	criarEstrutura
-	adicionarBibliotecas
+	atualizarBibliotecas
 	echo ":compilar"
 	touch ${contrucaoCompilacao}
-	javac -classpath ${bibliotecasJava}/*:${binariosJava} -sourcepath ${fontesJava} -d ${binariosJava} -Werror -deprecation -g ${arquivosFontesJava} -Xlint -Xmaxerrs 10 -Xmaxwarns 10 &> ${contrucaoCompilacao}
+	arquivosJava=$(find ${java} -name *.java)
+	javac -classpath ${jar}/*:${class} -sourcepath ${java} -d ${class} -Werror -deprecation -g ${arquivosJava} -Xlint -Xmaxerrs 10 -Xmaxwarns 10 &> ${contrucaoCompilacao}
 	less ${contrucaoCompilacao}
 }
 
 construir() {
 	compilar
 	echo ":construir"
-	jar -cf ${construcao}/${pacoteDoProjeto}.jar -C ${binariosJava} .
+	jar cf ${construcao}/${pacoteDoProjeto}.jar -C ${class} .
 }
 
 testar() {
 	construir
 	echo ":testar"
-	touch ${contrucaoTeste}
-	java -classpath ${bibliotecasJava}/*:${binariosJava} org.junit.runner.JUnitCore ${classesTestesJava} &> ${contrucaoTeste}
-	less ${contrucaoTeste}
-}
-
-depurar() {
-	construir
-	echo ":depurar"
-	jdb -classpath ${bibliotecasJava}:${binariosJava} org.junit.runner.JUnitCore ${classesTestesJava}
+	arquivosTestesJava=$(find ${java} -name *Teste*.java)
+	classesTestesJava=$(echo ${arquivosTestesJava} | sed -e s:${java}/::g -e s:^/::g -e "s:\s/: :g" -e s:/:.:g -e s:\.java::g -e s:[a-Z.]*figuracao[a-Z.]*::g)
+	java -classpath ${jar}/*:${class} org.junit.runner.JUnitCore ${classesTestesJava}
 }
 
 executar() {
